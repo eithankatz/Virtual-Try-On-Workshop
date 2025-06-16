@@ -70,18 +70,20 @@ async def upload_garment(
 async def virtual_tryon(
     user_image_path: str = Form(...),
     garment_image_path: str = Form(...),
-    measurements: str = Form(...)
+    measurements: str = Form(...),
+    height: float = Form(...),
+    weight: float = Form(...)
 ):
     # Use Gradio client to call IDM-VTON
     client = Client("yisol/IDM-VTON")
-    # Prepare dict for the 'dict' parameter (background is user image, layers empty, composite None)
+    # Combine measurements with height/weight for garment_des
+    garment_des_param = f"{measurements}; User height: {height}cm; User weight: {weight}kg"
     dict_param = {
         "background": file(user_image_path),
         "layers": [],
         "composite": None
     }
     garm_img_param = file(garment_image_path)
-    garment_des_param = measurements
     is_checked = True
     is_checked_crop = False
     denoise_steps = 30
@@ -97,17 +99,15 @@ async def virtual_tryon(
             seed=seed,
             api_name="/tryon"
         )
-        # result is a tuple: (output_image_path, masked_image_path)
         output_image_path = result[0]
         masked_image_path = result[1]
-        # Read output image as base64
         import base64
         with open(output_image_path, "rb") as f:
             base64_img = base64.b64encode(f.read()).decode("utf-8")
         tryon_result = f"data:image/png;base64,{base64_img}"
+        return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path}
     except Exception as e:
-        tryon_result = None
-    return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path}
+        return {"tryon_result": None, "user_image": user_image_path, "garment_image": garment_image_path, "error": str(e)}
 
 @app.post("/llm_feedback")
 async def llm_feedback(
