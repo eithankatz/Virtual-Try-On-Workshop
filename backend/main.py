@@ -22,6 +22,7 @@ from PIL import Image
 import numpy as np
 from gradio_client import Client
 from gradio_client import handle_file
+import base64
 
 
 app = FastAPI()
@@ -68,6 +69,49 @@ async def upload_garment(
         shutil.copyfileobj(file.file, buffer)
     return {"garment_image_path": garment_path, "measurements": measurements}
 
+def describe_user_and_garment_with_llm(user_image_path, garment_image_path):
+    """
+    Calls a HuggingFace multimodal LLM API (e.g., LLaVA) with user and garment images and returns a description string.
+    """
+    api_url = "https://api-inference.huggingface.co/models/llava-hf/llava-1.5-7b-hf"
+    headers = {
+        "Authorization": "Bearer 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"
+    }
+    # Ensure we use the correct local path for the garment image
+    user_image_filename = os.path.basename(user_image_path)
+    garment_image_filename = os.path.basename(garment_image_path)
+    user_image_fullpath = os.path.join(UPLOAD_DIR, user_image_filename)
+    garment_image_fullpath = os.path.join(UPLOAD_DIR, garment_image_filename)
+    # Read and encode images as base64
+    with open(user_image_fullpath, "rb") as f:
+        user_img_b64 = base64.b64encode(f.read()).decode("utf-8")
+    with open(garment_image_fullpath, "rb") as f:
+        garment_img_b64 = base64.b64encode(f.read()).decode("utf-8")
+    # Compose multimodal prompt (format may depend on model)
+    payload = {
+        "inputs": {
+            "image": [user_img_b64, garment_img_b64],
+            "parameters": {
+                "prompt": "Describe the user and garment in detail for a virtual try-on system."
+            }
+        }
+    }
+    try:
+        response = requests.post(api_url, headers=headers, json=payload, timeout=60)
+        if response.status_code == 200:
+            data = response.json()
+            # Try to extract the description
+            if isinstance(data, dict) and "generated_text" in data:
+                return data["generated_text"]
+            elif isinstance(data, list) and len(data) > 0 and "generated_text" in data[0]:
+                return data[0]["generated_text"]
+            else:
+                return str(data)
+        else:
+            return f"LLM API error: {response.text}"
+    except Exception as e:
+        return f"Exception: {str(e)}"
+
 @app.post("/virtual_tryon")
 async def virtual_tryon(
     user_image_path: str = Form(...),
@@ -76,13 +120,17 @@ async def virtual_tryon(
     height: float = Form(...),
     weight: float = Form(...)
 ):
-    # Use Gradio client to call IDM-VTON
-    client = Client("yisol/IDM-VTON")
-    # Combine measurements with height/weight for garment_des
-    garment_des_param = f"{measurements}; User height: {height}cm; User weight: {weight}kg"
     real_user_path = os.path.abspath(user_image_path.lstrip("/"))
     real_garment_path = os.path.abspath(garment_image_path.lstrip("/"))
 
+    # Generate a description using LLM
+    llm_description = describe_user_and_garment_with_llm(user_image_path, garment_image_path)
+    # Use LLM description as garment_des_param
+    garment_des_param = llm_description
+    client = Client("yisol/IDM-VTON")
+    # Combine measurements with height/weight for garment_des
+    garment_des_param = f"{measurements}; User height: {height}cm; User weight: {weight}kg"
+    
     #debugging(roy)
     #print("=== virtual_tryon DEBUG ===")
     #print("user_image_path (raw):", user_image_path)
@@ -119,9 +167,9 @@ async def virtual_tryon(
         with open(output_image_path, "rb") as f:
             base64_img = base64.b64encode(f.read()).decode("utf-8")
         tryon_result = f"data:image/png;base64,{base64_img}"
-        return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path}
+        return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path, "llm_description": llm_description}
     except Exception as e:
-        return {"tryon_result": None, "user_image": user_image_path, "garment_image": garment_image_path, "error": str(e)}
+        return {"tryon_result": None, "user_image": user_image_path, "garment_image": garment_image_path, "llm_description": llm_description, "error": str(e)}
 
 @app.post("/llm_feedback")
 async def llm_feedback(
