@@ -178,7 +178,8 @@ async def llm_feedback(
     garment_info: str = Form(...)
 ):
     prompt = f"A user with info {user_info} tried on a garment with info {garment_info}. The try-on result is at: {tryon_result}. Give a realistic, neutral feedback about the fit and look."
-    api_url = "https://api-inference.huggingface.co/models/mistralai/Mixtral-8x7B-Instruct-v0.1"
+    # Use Llama 3 8B Instruct model for feedback
+    api_url = "https://api-inference.huggingface.co/models/meta-llama/Meta-Llama-3-8B-Instruct"
     headers = {
         "Accept": "application/json",
         "Authorization": "Bearer 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"
