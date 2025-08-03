@@ -1,4 +1,4 @@
-# FastAPI backend for virtual try-on
+# FastAPI backend
 import ssl
 
 try:
@@ -128,8 +128,8 @@ async def virtual_tryon(
     # Use LLM description as garment_des_param
     garment_des_param = llm_description
     client = Client("yisol/IDM-VTON")
-    # Combine measurements with height/weight for garment_des
-    garment_des_param = f"{measurements}; User height: {height}cm; User weight: {weight}kg"
+    # Combine LLM description with measurements, height, and weight
+    garment_des_param = f"{llm_description}\nMeasurements: {measurements}; User height: {height}cm; User weight: {weight}kg"
     
     #debugging(roy)
     #print("=== virtual_tryon DEBUG ===")

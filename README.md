@@ -50,19 +50,19 @@ uploads/      # Uploaded images (used by backend)
 ## API Endpoints
 - `POST /upload_user` — Upload user photo, height, and weight.
 - `POST /upload_garment` — Upload garment image and measurements.
-- `POST /virtual_tryon` — Run virtual try-on (calls LLM for description, then VTON model).
+- `POST /virtual_tryon` — Run virtual try-on (calls LLM for description, then IDM model).
 - `POST /llm_feedback` — Get feedback from an LLM about the try-on result.
 
 ## How It Works
 - **User and Garment Images:** The user uploads a photo and selects or uploads a garment image.
 - **Masking Model:** The backend uses MediaPipe Selfie Segmentation to generate a mask of the user's body, isolating the person from the background for more accurate try-on results.
-- **LLM Description (LLaVA):** Before running the virtual try-on, the backend sends both the user and garment images to a multimodal LLM (LLaVA) via the HuggingFace API. The LLM generates a detailed description of the user and garment, which is then used as the input prompt (description) for the VTON model.
-- **VTON Model:** The backend calls the IDM-VTON model (via Gradio client) using the user image, garment image, and the LLaVA-generated description to produce a realistic try-on result.
+- **LLM Description (LLaVA):** Before running the virtual try-on, the backend sends both the user and garment images to a multimodal LLM (LLaVA) via the HuggingFace API. The LLM generates a detailed description of the user and garment, which is then used as the input prompt (description) for the IDM model.
+- **IDM Model:** The backend calls the IDM model (via Gradio client) using the user image, garment image, and the LLaVA-generated description to produce a realistic try-on result.
 - **Feedback:** Optionally, the try-on result can be sent to an LLM for feedback about the fit and look.
 
 ## Notes
 - All images are stored in the `uploads/` directory for backend processing.
-- The backend uses MediaPipe for user segmentation and calls HuggingFace APIs for LLM and VTON.
+- The backend uses MediaPipe for user segmentation and calls HuggingFace APIs for LLM and IDM.
 - You may need to set your own HuggingFace API key in the backend code for production use.
 
 ## License
