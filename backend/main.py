@@ -128,6 +128,7 @@ async def virtual_tryon(
     # Use LLM description as garment_des_param
     garment_des_param = llm_description
     client = Client("yisol/IDM-VTON")
+<<<<<<< HEAD
     # Combine LLM description with measurements, height, and weight
     garment_des_param = f"{llm_description}\nMeasurements: {measurements}; User height: {height}cm; User weight: {weight}kg"
     
@@ -140,12 +141,20 @@ async def virtual_tryon(
     #print("Exists?", os.path.exists(real_user_path), os.path.exists(real_garment_path))
     #end
 
+=======
+    # Combine measurements with height/weight for garment_des
+    garment_des_param = f"{measurements}; User height: {height}cm; User weight: {weight}kg"
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
     dict_param = {
     "background": handle_file(real_user_path),
     "layers": [],
     "composite": None
     }
+<<<<<<< HEAD
     garm_img_param = handle_file(real_garment_path) 
+=======
+    garm_img_param = file(garment_image_path)
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
     is_checked = True
     is_checked_crop = False
     denoise_steps = 30
@@ -167,9 +176,15 @@ async def virtual_tryon(
         with open(output_image_path, "rb") as f:
             base64_img = base64.b64encode(f.read()).decode("utf-8")
         tryon_result = f"data:image/png;base64,{base64_img}"
+<<<<<<< HEAD
         return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path, "llm_description": llm_description}
     except Exception as e:
         return {"tryon_result": None, "user_image": user_image_path, "garment_image": garment_image_path, "llm_description": llm_description, "error": str(e)}
+=======
+        return {"tryon_result": tryon_result, "user_image": user_image_path, "garment_image": garment_image_path}
+    except Exception as e:
+        return {"tryon_result": None, "user_image": user_image_path, "garment_image": garment_image_path, "error": str(e)}
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
 
 @app.post("/llm_feedback")
 async def llm_feedback(

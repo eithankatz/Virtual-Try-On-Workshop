@@ -194,6 +194,7 @@ export default function App() {
       .finally(() => setLoading(false));
   }
 
+<<<<<<< HEAD
   // Store garment selection handler
   function handleStoreSelect(garment, size) {
     setSelectedGarment(garment);
@@ -209,6 +210,8 @@ export default function App() {
     });
   }
 
+=======
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
   return (
     <div style={{
       minHeight: '100vh',
@@ -219,8 +222,13 @@ export default function App() {
       justifyContent: 'center',
     }}>
       <div style={{
+<<<<<<< HEAD
         maxWidth: 900, // Reduced from 1200 to 900 for better proportions
         width: '90%', // Slightly less wide
+=======
+        maxWidth: 600,
+        width: '100%',
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
         fontFamily: "'Segoe UI', 'Roboto', 'Arial', sans-serif",
         background: "#181c24",
         borderRadius: 12,
@@ -230,6 +238,7 @@ export default function App() {
       }}>
         <h1 style={{ textAlign: 'center', color: '#e3e8ef', fontWeight: 700, letterSpacing: 1, marginBottom: 32 }}>Virtual Try-On</h1>
         {error && <div style={{ color: "#ff6b6b", background: "#2d2323", border: "1px solid #ffbdbd", padding: 12, borderRadius: 6, marginBottom: 18, textAlign: 'center' }}>{error}</div>}
+<<<<<<< HEAD
 
         {/* Store Section */}
         <div style={{ marginBottom: 36, background: '#232a36', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px #232a36' }}>
@@ -332,6 +341,60 @@ export default function App() {
         </div>
 
         <div style={{ marginBottom: 32, background: '#232a36', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px #232a36' }}>
+=======
+        <div style={{ marginBottom: 32, background: '#232a36', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px #232a36' }}>
+          <h2 style={{ color: '#e3e8ef', fontSize: 20, marginBottom: 12 }}>1. Upload Your Photo</h2>
+          <label style={{
+            display: 'inline-block',
+            background: 'linear-gradient(90deg, #1976d2 60%, #388e3c 100%)',
+            color: '#fff',
+            padding: '10px 28px',
+            borderRadius: 8,
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginBottom: 14,
+            fontSize: 16,
+            boxShadow: '0 2px 8px #232a36',
+            border: 'none',
+            transition: 'background 0.2s',
+          }}>
+            Choose Photo
+            <input type="file" accept="image/*" onChange={e => { setUserFile(e.target.files[0]); if(e.target.files[0]) handleUserUploadFile(e.target.files[0], height, weight); }} style={{ display: 'none' }} />
+          </label>
+          <div style={{ display: 'flex', gap: 16, marginBottom: 10 }}>
+            <label style={{ flex: 1, color: '#bfc7d5' }}>Height (cm): <input type="number" value={height} onChange={e => setHeight(e.target.value)} required style={{ width: 80, marginLeft: 6, borderRadius: 4, border: '1px solid #38404d', padding: 4, background: '#232a36', color: '#e3e8ef' }} /></label>
+            <label style={{ flex: 1, color: '#bfc7d5' }}>Weight (kg): <input type="number" value={weight} onChange={e => setWeight(e.target.value)} required style={{ width: 80, marginLeft: 6, borderRadius: 4, border: '1px solid #38404d', padding: 4, background: '#232a36', color: '#e3e8ef' }} /></label>
+          </div>
+          {userUploadResult && <span style={{ color: '#4caf50', marginLeft: 14, fontWeight: 500 }}>Uploaded!</span>}
+        </div>
+
+        <div style={{ marginBottom: 32, background: '#232a36', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px #232a36' }}>
+          <h2 style={{ color: '#e3e8ef', fontSize: 20, marginBottom: 12 }}>2. Upload Garment</h2>
+          <label style={{
+            display: 'inline-block',
+            background: 'linear-gradient(90deg, #1976d2 60%, #388e3c 100%)',
+            color: '#fff',
+            padding: '10px 28px',
+            borderRadius: 8,
+            fontWeight: 600,
+            cursor: 'pointer',
+            marginBottom: 14,
+            fontSize: 16,
+            boxShadow: '0 2px 8px #232a36',
+            border: 'none',
+            transition: 'background 0.2s',
+          }}>
+            Choose Garment
+            <input type="file" accept="image/*" onChange={e => { setGarmentFile(e.target.files[0]); if(e.target.files[0]) handleGarmentUploadFile(e.target.files[0], measurements); }} style={{ display: 'none' }} />
+          </label>
+          <div style={{ marginBottom: 10 }}>
+            <label style={{ color: '#bfc7d5' }}>Measurements: <input type="text" value={measurements} onChange={e => setMeasurements(e.target.value)} required placeholder="e.g. Chest 100cm, Length 70cm" style={{ borderRadius: 4, border: '1px solid #38404d', padding: 4, width: 220, marginLeft: 6, background: '#232a36', color: '#e3e8ef' }} /></label>
+          </div>
+          {garmentUploadResult && <span style={{ color: '#4caf50', marginLeft: 14, fontWeight: 500 }}>Uploaded!</span>}
+        </div>
+
+        <div style={{ marginBottom: 32, background: '#232a36', borderRadius: 8, padding: 20, boxShadow: '0 1px 4px #232a36' }}>
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
           <h2 style={{ color: '#e3e8ef', fontSize: 20, marginBottom: 12 }}>3. Try On</h2>
           <button onClick={handleTryon} disabled={loading || !userUploadResult || !garmentUploadResult} style={{ background: '#1976d2', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 20px', fontWeight: 600, cursor: 'pointer' }}>Try On</button>
           {loading && <span style={{ marginLeft: 14, color: '#90caf9' }}>Processing...</span>}

@@ -1,6 +1,18 @@
+<<<<<<< HEAD
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
 
 # ...other recommended ignores...
+=======
+# Ignore node_modules completely
+frontend/node_modules/
+
+# Optional ignores to keep your repo clean
+__pycache__/
+.vscode/
+uploads/
+*.pyc
+.DS_Store
+>>>>>>> e13d8600126a856eabe69fe14ce81902a2b54914
